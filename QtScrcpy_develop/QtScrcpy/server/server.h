@@ -70,7 +70,7 @@ private:
     quint16 m_maxSize = 0;
     quint32 m_bitRate = 0;
     QString m_crop = "";
-    quint32 m_acceptTimeoutTimer = 0;
+    int m_acceptTimeoutTimer = 0;
 
     SERVER_START_STEP m_serverStartStep = SSS_NULL;
 };

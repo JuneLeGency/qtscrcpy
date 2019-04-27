@@ -51,7 +51,7 @@ void AdbProcess::initSignals()
 
     connect(this, &QProcess::errorOccurred, this,
             [this](QProcess::ProcessError error){        
-        if (QProcess::FailedToStart == error) {            
+        if (QProcess::FailedToStart == error) {
             emit adbProcessResult(AER_ERROR_MISSING_BINARY);
         } else {
             emit adbProcessResult(AER_ERROR_START);

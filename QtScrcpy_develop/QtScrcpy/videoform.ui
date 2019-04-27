@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>800</height>
+    <width>371</width>
+    <height>825</height>
    </rect>
   </property>
   <property name="acceptDrops">
@@ -18,25 +18,25 @@
   </property>
   <property name="styleSheet">
    <string notr="true">#videoForm {
-	border-image: url(:/res/phone-v.png) 150px 142px 85px 142px;
-	border-width: 150px 142px 85px 142px;
-}</string>
+                     border-image: url(:/res/MIX3-v.png) 15px 67px 14px 19px;
+                     border-width: 15px 67px 14px 19px;
+                 }</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>0</number>
    </property>
    <property name="leftMargin">
-    <number>10</number>
+    <number>15</number>
    </property>
    <property name="topMargin">
-    <number>68</number>
+    <number>67</number>
    </property>
    <property name="rightMargin">
-    <number>12</number>
+    <number>14</number>
    </property>
    <property name="bottomMargin">
-    <number>62</number>
+    <number>19</number>
    </property>
    <item>
     <widget class="QWidget" name="loadingWidget" native="true">
@@ -44,7 +44,9 @@
       <bool>false</bool>
      </property>
      <property name="styleSheet">
-      <string notr="true"/>
+      <string notr="true">#loadingWidget {
+	background-color: red; border: 1px solid black; border-radius: 10px;
+}</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="spacing">
@@ -68,7 +70,9 @@
          <bool>false</bool>
         </property>
         <property name="styleSheet">
-         <string notr="true"/>
+         <string notr="true">#quickWidget{
+background-color: red; border: 1px solid black; border-radius: 10px;
+}</string>
         </property>
         <property name="resizeMode">
          <enum>QQuickWidget::SizeRootObjectToView</enum>
@@ -84,7 +88,26 @@
     </widget>
    </item>
    <item>
-    <widget class="QYUVOpenGLWidget" name="videoWidget" native="true"/>
+    <widget class="QYUVOpenGLWidget" name="videoWidget" native="true">
+     <property name="styleSheet">
+      <string notr="true">#videoWidget{
+background-color: red; border: 1px solid black; border-radius: 10px;
+}</string>
+     </property>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>40</y>
+        <width>59</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>TextLabel</string>
+      </property>
+     </widget>
+    </widget>
    </item>
   </layout>
  </widget>

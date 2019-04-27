@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>VideoWidget</class>
+ <widget class="QWidget" name="VideoWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>371</width>
+    <height>825</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <widget class="QWidget" name="cover" native="true">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>371</width>
+     <height>825</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">#cover {
+                     border-image: url(:/res/MIX3-v.png) 15px 67px 14px 19px;
+                 }</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="container" native="true">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>371</width>
+     <height>825</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="leftMargin">
+     <number>15</number>
+    </property>
+    <property name="topMargin">
+     <number>67</number>
+    </property>
+    <property name="rightMargin">
+     <number>14</number>
+    </property>
+    <property name="bottomMargin">
+     <number>19</number>
+    </property>
+    <item>
+     <widget class="QYUVOpenGLWidget" name="video" native="true"/>
+    </item>
+   </layout>
+  </widget>
+  <zorder>container</zorder>
+  <zorder>cover</zorder>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QYUVOpenGLWidget</class>
+   <extends>QWidget</extends>
+   <header>qyuvopenglwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

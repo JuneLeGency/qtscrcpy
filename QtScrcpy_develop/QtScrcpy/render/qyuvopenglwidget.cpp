@@ -154,6 +154,21 @@ void QYUVOpenGLWidget::resizeGL(int width, int height)
     repaint();
 }
 
+void QYUVOpenGLWidget::mousePressEvent(QMouseEvent *event)
+{
+    qDebug()<<"mousePressed";
+}
+
+void QYUVOpenGLWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+
+}
+
+void QYUVOpenGLWidget::mouseMoveEvent(QMouseEvent *event)
+{
+
+}
+
 void QYUVOpenGLWidget::initShader()
 {
     // opengles的float、int等要手动指定精度

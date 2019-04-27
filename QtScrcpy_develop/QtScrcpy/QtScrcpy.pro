@@ -6,7 +6,7 @@
 
 QT += core gui
 QT += network quickwidgets
-
+QT += usb
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = QtScrcpy
@@ -30,17 +30,20 @@ SOURCES += \
         main.cpp \
         dialog.cpp \
     videoform.cpp \
-    toolform.cpp
+    toolform.cpp \
+    videowidget.cpp
 
 HEADERS += \
         dialog.h \
     videoform.h \
-    toolform.h
+    toolform.h \
+    videowidget.h
 
 FORMS += \
         dialog.ui \
     videoform.ui \
-    toolform.ui
+    toolform.ui \
+    videowidget.ui
 
 # 子工程
 include ($$PWD/common/common.pri)

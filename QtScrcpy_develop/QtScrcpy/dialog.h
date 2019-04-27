@@ -3,6 +3,8 @@
 
 #include <QDialog>
 #include <QPointer>
+#include <QUsbInfo>
+#include <QUsbDevice>
 
 #include "videoform.h"
 #include "adbprocess.h"
@@ -40,7 +42,6 @@ private slots:
     void on_selectRecordPathBtn_clicked();
 
     void on_recordPathEdt_textChanged(const QString &arg1);
-
 private:
     bool checkAdbRun();
     void initUI();
@@ -49,6 +50,7 @@ private:
     Ui::Dialog *ui;
     AdbProcess m_adb;
     QPointer<VideoForm> m_videoForm;
+    QUsbInfo m_usb_manager;
 };
 
 #endif // DIALOG_H

@@ -6,6 +6,7 @@
 
 #include "dialog.h"
 #include "ui_dialog.h"
+#include "videowidget.h"
 
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
@@ -13,6 +14,22 @@ Dialog::Dialog(QWidget *parent) :
 {    
     ui->setupUi(this);
     initUI();
+    connect(&m_usb_manager,&QUsbInfo::deviceInserted,this,[=](QUsbDevice::IdList list){
+        for (int i = 0; i < list.length(); i++) {
+            QUsbDevice::Id f = list.at(i);
+            qInfo("V%04x:P%04x", f.vid, f.pid);
+            QUsbDevice *usbDevice =new QUsbDevice();
+            usbDevice->setId(f);
+            usbDevice->open();
+            usbDevice->close();
+            qInfo()<<usbDevice->info().product<<
+                      usbDevice->info().manufacturer<<
+                      usbDevice->info().serialNumber<<
+                      usbDevice->speed();
+            on_updateDevice_clicked();
+        }
+    });
+    connect(&m_usb_manager,&QUsbInfo::deviceRemoved,this,[=](QUsbDevice::IdList){});
 
     connect(&m_adb, &AdbProcess::adbProcessResult, this, [this](AdbProcess::ADB_EXEC_RESULT processResult){
         QString log = "";
@@ -23,11 +40,13 @@ Dialog::Dialog(QWidget *parent) :
             log = "adb run";
             newLine = false;
             break;
+        case AdbProcess::AER_ERROR_START:
+            break;
         case AdbProcess::AER_ERROR_EXEC:
             //log = m_adb.getErrorOut();
             break;
         case AdbProcess::AER_ERROR_MISSING_BINARY:
-            log = "adb not find";
+            log = "adb not find or no permission";
             break;
         case AdbProcess::AER_SUCCESS_EXEC:
             //log = m_adb.getStdOut();
@@ -73,7 +92,7 @@ void Dialog::initUI()
     ui->videoSizeBox->addItem("720");
     ui->videoSizeBox->addItem("1080");
     ui->videoSizeBox->addItem("native");
-    ui->videoSizeBox->setCurrentIndex(1);
+    ui->videoSizeBox->setCurrentIndex(3);
 }
 
 void Dialog::on_updateDevice_clicked()
@@ -87,25 +106,27 @@ void Dialog::on_updateDevice_clicked()
 
 void Dialog::on_startServerBtn_clicked()
 {
-    if (!m_videoForm) {
-        QString absFilePath;
-        QString fileDir(ui->recordPathEdt->text().trimmed());
-        if (!fileDir.isEmpty()) {
-            QDateTime dateTime = QDateTime::currentDateTime();
-            QString fileName = dateTime.toString("_yyyyMMdd_hhmmss.zzz");
-            fileName = windowTitle() + fileName + ".mp4";
-            QDir dir(fileDir);
-            absFilePath = dir.absoluteFilePath(fileName);
-        }
+//    if (!m_videoForm) {
+//        QString absFilePath;
+//        QString fileDir(ui->recordPathEdt->text().trimmed());
+//        if (!fileDir.isEmpty()) {
+//            QDateTime dateTime = QDateTime::currentDateTime();
+//            QString fileName = dateTime.toString("_yyyyMMdd_hhmmss.zzz");
+//            fileName = windowTitle() + fileName + ".mp4";
+//            QDir dir(fileDir);
+//            absFilePath = dir.absoluteFilePath(fileName);
+//        }
 
-        quint32 bitRate = ui->bitRateBox->currentText().trimmed().toUInt();
-        // this is ok that "native" toUshort is 0
-        quint16 videoSize = ui->videoSizeBox->currentText().trimmed().toUShort();
-        m_videoForm = new VideoForm(ui->serialBox->currentText().trimmed(), videoSize, bitRate, absFilePath);
+//        quint32 bitRate = ui->bitRateBox->currentText().trimmed().toUInt();
+//        // this is ok that "native" toUshort is 0
+//        quint16 videoSize = ui->videoSizeBox->currentText().trimmed().toUShort();
+//        m_videoForm = new VideoForm(ui->serialBox->currentText().trimmed(), videoSize, bitRate, absFilePath);
 
-        outLog("start server...", false);
-    }
-    m_videoForm->show();
+//        outLog("start server...", false);
+//    }
+//    m_videoForm->show();
+    VideoWidget *videoWidget = new VideoWidget();
+    videoWidget->show();
 }
 
 void Dialog::on_stopServerBtn_clicked()

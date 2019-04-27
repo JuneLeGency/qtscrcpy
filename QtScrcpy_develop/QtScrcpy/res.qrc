@@ -8,5 +8,6 @@
         <file>qml/images/pinwheel.png</file>
         <file>i18n/QtScrcpy_en.qm</file>
         <file>i18n/QtScrcpy_zh.qm</file>
+        <file>res/MIX3-v.png</file>
     </qresource>
 </RCC>

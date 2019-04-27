@@ -79,6 +79,7 @@ private:
     QPointer<ToolForm> m_toolForm;
     Recorder* m_recorder = Q_NULLPTR;
     QTime m_startTimeCount;
+    bool m_video_moving;
 };
 
 #endif // VIDEOFORM_H

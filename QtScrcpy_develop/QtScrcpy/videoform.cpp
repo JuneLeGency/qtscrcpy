@@ -18,7 +18,7 @@
 #include "toolform.h"
 #include "controlevent.h"
 #include "recorder.h"
-
+#include <QScreen>
 VideoForm::VideoForm(const QString& serial, quint16 maxSize, quint32 bitRate, const QString& fileName, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::videoForm),
@@ -74,7 +74,7 @@ VideoForm::~VideoForm()
 void VideoForm::initUI()
 {
     QPixmap phone;
-    if (phone.load(":/res/phone.png")) {
+    if (phone.load(":/res/MIX3-v.png")) {
         m_widthHeightRatio = 1.0f * phone.width() / phone.height();
     }
 
@@ -85,9 +85,9 @@ void VideoForm::initUI()
     // 根据图片构造异形窗口
     setAttribute(Qt::WA_TranslucentBackground);
 
-    setMouseTracking(true);
+//    setMouseTracking(true);
     ui->loadingWidget->setAttribute(Qt::WA_DeleteOnClose);
-    ui->videoWidget->setMouseTracking(true);
+//    ui->videoWidget->setMouseTracking(true);
     ui->videoWidget->hide();
 
     // 最后绘制，不设置最后绘制会影响父窗体异形异常（quickWidget的透明通道会形成穿透）
@@ -109,8 +109,9 @@ void VideoForm::initSignals()
             QMessageBox::information(this, "QtScrcpy", tr("file transfer failed"), QMessageBox::Ok);
         }
     });
-    connect(&m_inputConvert, &InputConvertGame::grabCursor, this, [this](bool grab){
 #ifdef Q_OS_WIN32
+    connect(&m_inputConvert, &InputConvertGame::grabCursor, this, [=](bool grab){
+
         if(grab) {
             QRect rc(mapToGlobal(ui->videoWidget->pos())
                      , ui->videoWidget->size());
@@ -123,12 +124,11 @@ void VideoForm::initSignals()
         } else {
             ClipCursor(Q_NULLPTR);
         }
-#endif
+
     });
+#endif
     connect(m_server, &Server::serverStartResult, this, [this](bool success){
-        if (success) {
-            m_server->connectTo();
-        } else {
+        if (!success) {
             close();
         }
     });
@@ -136,7 +136,7 @@ void VideoForm::initSignals()
     connect(m_server, &Server::connectToResult, this, [this](bool success, const QString &deviceName, const QSize &size){
         if (success) {
             float diff = m_startTimeCount.elapsed() / 1000.0f;
-            qInfo(QString("server start finish in %1s").arg(diff).toStdString().c_str());
+            qInfo(QString("server start finish in %1f").arg(diff).toStdString().c_str());
 
 
             // update ui
@@ -197,11 +197,11 @@ void VideoForm::updateStyleSheet(bool vertical)
     if (vertical) {
         setStyleSheet(R"(
                  #videoForm {
-                     border-image: url(:/res/phone-v.png) 150px 142px 85px 142px;
-                     border-width: 150px 142px 85px 142px;
+                     border-image: url(:/res/MIX3-v.png) 15px 67px 14px 19px;
+                     border-width: 15px 67px 14px 19px;
                  }
                  )");
-        layout()->setContentsMargins(10, 68, 12, 62);
+        layout()->setContentsMargins(15, 67, 14, 19);
     } else {
         setStyleSheet(R"(
                  #videoForm {
@@ -215,6 +215,7 @@ void VideoForm::updateStyleSheet(bool vertical)
 
 void VideoForm::updateShowSize(const QSize &newSize)
 {
+    qDebug()<<"newSize"<<newSize.height()<<newSize.width();
     if (frameSize != newSize) {
         frameSize = newSize;
 
@@ -222,9 +223,11 @@ void VideoForm::updateShowSize(const QSize &newSize)
         QSize showSize = newSize;
         QDesktopWidget* desktop = QApplication::desktop();
         if (desktop) {
-            QRect screenRect = desktop->availableGeometry();
+            QScreen *screen = desktop->window()->windowHandle()->screen();
+            QRect screenRect = screen->availableGeometry();
+            qDebug()<<"screenRect"<<screenRect.width()<<screenRect.height();
             if (vertical) {
-                showSize.setHeight(qMin(newSize.height(), screenRect.height() - 200));
+                showSize.setHeight(qMin(newSize.height(),screenRect.height()));
                 showSize.setWidth(showSize.height() * m_widthHeightRatio);
             } else {
                 showSize.setWidth(qMin(newSize.width(), screenRect.width()/2));
@@ -241,7 +244,7 @@ void VideoForm::updateShowSize(const QSize &newSize)
         // 减去标题栏高度 (mark:已经没有标题栏了)
         //int titleBarHeight = style()->pixelMetric(QStyle::PM_TitleBarHeight);
         //showSize.setHeight(showSize.height() - titleBarHeight);
-
+        qDebug()<<"showSize"<<showSize.height()<<showSize.width();
         if (showSize != size()) {
 #ifdef Q_OS_OSX
             setFixedSize(showSize);
@@ -359,7 +362,10 @@ void VideoForm::mousePressEvent(QMouseEvent *event)
     if (ui->videoWidget->geometry().contains(event->pos())) {
         event->setLocalPos(ui->videoWidget->mapFrom(this, event->localPos().toPoint()));
         m_inputConvert.mouseEvent(event, ui->videoWidget->frameSize(), ui->videoWidget->size());
-    } else {
+        m_video_moving = true;
+    }
+    else {
+        m_video_moving = false;
         if (event->button() == Qt::LeftButton) {
             m_dragPosition = event->globalPos() - frameGeometry().topLeft();
             event->accept();
@@ -373,6 +379,7 @@ void VideoForm::mouseReleaseEvent(QMouseEvent *event)
         event->setLocalPos(ui->videoWidget->mapFrom(this, event->localPos().toPoint()));
         m_inputConvert.mouseEvent(event, ui->videoWidget->frameSize(), ui->videoWidget->size());
     }
+    m_video_moving = false;
 }
 
 void VideoForm::mouseMoveEvent(QMouseEvent *event)
@@ -380,7 +387,8 @@ void VideoForm::mouseMoveEvent(QMouseEvent *event)
     if (ui->videoWidget->geometry().contains(event->pos())) {
         event->setLocalPos(ui->videoWidget->mapFrom(this, event->localPos().toPoint()));
         m_inputConvert.mouseEvent(event, ui->videoWidget->frameSize(), ui->videoWidget->size());
-    } else {
+    }
+    else if(!m_video_moving){
         if (event->buttons() & Qt::LeftButton) {
             move(event->globalPos() - m_dragPosition);
             event->accept();

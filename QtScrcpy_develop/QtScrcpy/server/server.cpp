@@ -206,6 +206,7 @@ bool Server::connectTo()
             stop();
         }
         emit connectToResult(success, deviceName, deviceSize);
+        return success;
     });
 
     return true;
@@ -302,7 +303,7 @@ bool Server::readInfo(QString &deviceName, QSize &size)
         m_deviceSocket->waitForReadyRead(300);
     }
 
-    qint64 len = m_deviceSocket->read((char*)buf, sizeof(buf));
+    qint64 len = m_deviceSocket->read(reinterpret_cast<char*>(buf), sizeof(buf));
     if (len < DEVICE_NAME_FIELD_LENGTH + 4) {
         qInfo("Could not retrieve device information");
         return false;
@@ -310,7 +311,7 @@ bool Server::readInfo(QString &deviceName, QSize &size)
     buf[DEVICE_NAME_FIELD_LENGTH - 1] = '\0'; // in case the client sends garbage
     // strcpy is safe here, since name contains at least DEVICE_NAME_FIELD_LENGTH bytes
     // and strlen(buf) < DEVICE_NAME_FIELD_LENGTH
-    deviceName = (char*)buf;
+    deviceName = reinterpret_cast<char*>(buf);
     size.setWidth((buf[DEVICE_NAME_FIELD_LENGTH] << 8) | buf[DEVICE_NAME_FIELD_LENGTH + 1]);
     size.setHeight((buf[DEVICE_NAME_FIELD_LENGTH + 2] << 8) | buf[DEVICE_NAME_FIELD_LENGTH + 3]);
     return true;
@@ -380,8 +381,10 @@ void Server::onWorkProcessResult(AdbProcess::ADB_EXEC_RESULT processResult)
     if (sender() == &m_serverProcess) {
         if (SSS_EXECUTE_SERVER == m_serverStartStep) {
             if (AdbProcess::AER_SUCCESS_START == processResult) {
+                //adb server 进程启动成功后进行连接
                 m_serverStartStep = SSS_RUNNING;
                 m_tunnelEnabled = true;
+                connectTo();
                 emit serverStartResult(true);
             } else if (AdbProcess::AER_ERROR_START == processResult){
                 if (!m_tunnelForward) {
