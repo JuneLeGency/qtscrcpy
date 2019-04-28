@@ -428,6 +428,7 @@ void VideoForm::keyReleaseEvent(QKeyEvent *event)
     m_inputConvert.keyEvent(event, ui->videoWidget->frameSize(), ui->videoWidget->size());
 }
 
+//https://blog.csdn.net/zzwdkxx/article/details/72780926
 void VideoForm::paintEvent(QPaintEvent *paint)
 {
     Q_UNUSED(paint);

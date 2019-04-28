@@ -3,6 +3,7 @@
 
 #include <QTimer>
 #include <QRegion>
+
 VideoWidget::VideoWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::VideoWidget)
@@ -10,24 +11,16 @@ VideoWidget::VideoWidget(QWidget *parent) :
     ui->setupUi(this);
     setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground);
-//    ui->cover->setAttribute(Qt::WA_AlwaysStackOnTop);
 
-//    ui->video->setAttribute(Qt::WA_AlwaysStackOnTop);
-//    setMouseTracking(true);
-//    ui->video->setMouseTracking(true);
-//    ui->cover->setAttribute(Qt::WA_TranslucentBackground);
-//    QPixmap p(":/res/MIX3-v.png");
-
+    //透过去让屏幕OpenGL区域可点击
 //    15 67 14 19  371 825
     QRegion regionAll = QRegion(0,0,371,825);
     QRegion region = QRegion(15,67,342,739);
-//    qDebug()<<"region"<<ui->cover->visibleRegion()<<region;
-//    region = ui->cover->visibleRegion().subtracted(region);
-    qDebug()<<"region"<<region;
     ui->cover->setMask(regionAll-region);
     m_server = new Server();
     m_frames.init();
     m_decoder.setFrames(&m_frames);
+    ui->video->setFocus();
     connect(m_server, &Server::serverStartResult, this, [this](bool success){
         if (!success) {
             close();
@@ -41,6 +34,7 @@ VideoWidget::VideoWidget(QWidget *parent) :
             // init decoder
             m_decoder.setDeviceSocket(m_server->getDeviceSocket());
             m_decoder.startDecode();
+            ui->video->setDeviceSocket(m_server->getDeviceSocket());
         }
     });
 

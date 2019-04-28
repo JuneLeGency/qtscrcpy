@@ -58,6 +58,7 @@ include ($$PWD/fontawesome/fontawesome.pri)
 include ($$PWD/filehandler/filehandler.pri)
 include ($$PWD/recorder/recorder.pri)
 
+
 # 附加包含路径
 INCLUDEPATH += \
         $$PWD/../third_party/ffmpeg/include \

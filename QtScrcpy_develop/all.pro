@@ -1,5 +1,6 @@
 TEMPLATE = subdirs
-SUBDIRS = QtScrcpy
+SUBDIRS = QtScrcpy \
+
 
 # 多语言翻译文件
 TRANSLATIONS = \

@@ -57,7 +57,7 @@
      <number>19</number>
     </property>
     <item>
-     <widget class="QYUVOpenGLWidget" name="video" native="true"/>
+     <widget class="QInteractiveGLWidget" name="video" native="true"/>
     </item>
    </layout>
   </widget>
@@ -66,9 +66,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QYUVOpenGLWidget</class>
+   <class>QInteractiveGLWidget</class>
    <extends>QWidget</extends>
-   <header>qyuvopenglwidget.h</header>
+   <header>qinteractiveglwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
